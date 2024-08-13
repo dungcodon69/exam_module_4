@@ -32,50 +32,121 @@
     </div>
 </nav>
 <div class="container">
-    <a th:href="@{/add-new}">
-        <button type="button" class="btn btn-outline-primary" >Thêm mới</button>
-    </a>
+    <form th:action="@{/list-by-top}" method="post">
+        <div class="row mt-3">
+            <div class="col-auto">
+                <span class="align-middle">Danh sách top: </span>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" aria-label="Default select example" name="top">
+                    <option value="3">Top 3</option>
+                    <option value="5">Top 5</option>
+                    <option value="10">Top 10</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <span> Sản phẩm được đặt hàng nhiều nhất</span>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-outline-primary">XEM</button>
+            </div>
+        </div>
+    </form>
+    <form th:action="@{/list-by-date}" method="get">
+        <div class="row mt-3">
+            <div>Danh sách sản phẩm đặt từ</div>
+            <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                    <label for="startDate">Ngày bắt đầu</label>
+                    <input id="startDate" class="form-control" type="date" name="startDate" required/>
+                    <span id="startDateSelected"></span>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <label for="endDate">Ngày kết thúc</label>
+                    <input id="endDate" class="form-control" type="date" name="endDate" required/>
+                    <span id="endDateSelected"></span>
+                </div>
+            </div>
+            <div class="col mt-1">
+                <button type="submit" class="btn btn-outline-primary">XEM</button>
+            </div>
+            <p th:text="${listByDateMessage}" style="color:red"></p>
+
+        </div>
+    </form>
+<!--    <a th:href="@{/add-new}">-->
+<!--        <button type="button" class="btn btn-outline-primary" >Thêm mới</button>-->
+<!--    </a>-->
     <!-- Content here -->
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-            <th scope="col"></th>
+            <th scope="col">STT</th>
+            <th scope="col">Ma don hang</th>
+            <th scope="col">Ten san pham</th>
+            <th scope="col">Gia</th>
+            <th scope="col">Loai san pham</th>
+            <th scope="col">Ngay mua</th>
+            <th scope="col">So luong</th>
+            <th scope="col">Tong tien</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
+        <tr th:each="item,itemStat : ${orders}">
+            <td th:text="${itemStat.count}"></td>
+            <td th:text="${item.id}"></td>
+            <td th:text="${item.product.name}"></td>
+            <td th:text="${item.product.price}"></td>
+            <td th:text="${item.product.category.name}"></td>
+            <td th:text="${item.orderDate}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.quantity * item.product.price}"></td>
             <td>
+                <a th:href="@{/update/{id}(id=${item.id})}">
                 <button type="button" class="btn btn-outline-primary">Sửa</button>
+                </a>
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">Xóa</button>
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                ...
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!--                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal">Xóa</button>-->
+<!--                &lt;!&ndash; Modal &ndash;&gt;-->
+<!--                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--                    <div class="modal-dialog">-->
+<!--                        <div class="modal-content">-->
+<!--                            <div class="modal-header">-->
+<!--                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>-->
+<!--                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                ...-->
+<!--                            </div>-->
+<!--                            <div class="modal-footer">-->
+<!--                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                                <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </td>
         </tr>
         </tbody>
     </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/list-by-date(startDate=${startDate}, endDate=${endDate}, page=${currentPage - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPage)}" th:classappend="${page == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/list-by-date(startDate=${startDate}, endDate=${endDate}, page=${page})}" th:text="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPage} ? 'disabled'">
+                <a class="page-link" th:href="@{/list-by-date(startDate=${startDate}, endDate=${endDate}, page=${currentPage + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
